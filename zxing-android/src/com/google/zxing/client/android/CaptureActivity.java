@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
@@ -133,19 +134,30 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     PreferenceManager.setDefaultValues(this, R.xml.zxing_preferences, false);
 
-    cancelButton = (Button) findViewById(R.id.zxing_back_button);
-
-    // Since the layout can be dynamically set by the Intent, cancelButton may not be present
-    if (cancelButton != null) {
+    Object button = findViewById(R.id.zxing_back_button);
+    // The layout can be dynamically set by the Intent, cancelButton may not be present
+    // or it may be an image acting as a button
+    if (button instanceof Button) {
+      cancelButton = (Button) button;
+      // Since the layout can be dynamically set by the Intent, cancelButton may not be present
       cancelButton.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                  setResult(RESULT_CANCELED);
-                  finish();
-              }
-          });
+        @Override
+        public void onClick(View view) {
+          setResult(RESULT_CANCELED);
+          finish();
+        }
+      });
+    } else if (button instanceof ImageView) {
+      ImageView cancelImageView = (ImageView) button;
+      // Since the layout can be dynamically set by the Intent, cancelButton may not be present
+      cancelImageView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          setResult(RESULT_CANCELED);
+          finish();
+        }
+      });
     }
-
   }
 
   @Override
@@ -168,11 +180,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     lastResult = null;
 
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-    if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
-      setRequestedOrientation(getCurrentOrientation());
+    if (prefs.getBoolean(PreferencesActivity.KEY_FIX_PORTRAIT_ORIENTATION, false)) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     } else {
-      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+      if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
+        setRequestedOrientation(getCurrentOrientation());
+      } else {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+      }
     }
 
     resetStatusView();

@@ -47,6 +47,7 @@ public final class PreferencesActivity extends Activity {
   public static final String KEY_INVERT_SCAN = "zxing_preferences_invert_scan";  
   public static final String KEY_SEARCH_COUNTRY = "zxing_preferences_search_country";
   public static final String KEY_DISABLE_AUTO_ORIENTATION = "zxing_preferences_orientation";
+  public static final String KEY_FIX_PORTRAIT_ORIENTATION = "zxing_preferences_orientation_portrait";
 
   public static final String KEY_DISABLE_CONTINUOUS_FOCUS = "zxing_preferences_disable_continuous_focus";
   public static final String KEY_DISABLE_EXPOSURE = "zxing_preferences_disable_exposure";
